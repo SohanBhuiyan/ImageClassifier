@@ -11,7 +11,7 @@
 import zipfile
 import os
 import random
-import from sample import Datum
+from sample import Datum
 def readlines(filename):
     "Opens a file or reads it from the zip archive data.zip"
     if (os.path.exists(filename)):
