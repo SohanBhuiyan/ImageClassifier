@@ -6,7 +6,7 @@ Define a structure for what a model does so that the perceptron and naive bayes 
 import numpy as np
 
 
-def Model:
+class Model:
 	"""Structure for a machine learning model"""
 	
 	def train(x: np.array, y: np.array):
