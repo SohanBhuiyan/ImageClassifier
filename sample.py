@@ -63,7 +63,7 @@ class Datum:
         self.width = DATUM_WIDTH
         if data == None:
             data = [[' ' for i in range(DATUM_WIDTH)] for j in range(DATUM_HEIGHT)]
-        self.pixels = np.asarray(convertToInteger(data))
+        self.pixels = np.asarray(util.convertToInteger(data))
         print("bump")
 
     def getPixel(self, column, row):
@@ -85,100 +85,12 @@ class Datum:
         rows = []
         data = self.pixels
         for row in data:
-            ascii = map(asciiGrayscaleConversionFunction, row)
+            ascii = map(util.asciiGrayscaleConversionFunction, row)
             rows.append("".join(ascii))
         return "\n".join(rows)
 
     def __str__(self):
         return self.getAsciiString()
-
-
-# Data processing, cleanup and display functions
-
-def loadDataFile(filename, n, width, height):
-    """
-    Reads n data images from a file and returns a list of Datum objects.
-
-    (Return less then n items if the end of file is encountered).
-    """
-    DATUM_WIDTH = width
-    DATUM_HEIGHT = height
-    fin = readlines(filename)
-    fin.reverse()
-    items = []
-    for i in range(n):
-        data = []
-        for j in range(height):
-            data.append(list(fin.pop()))
-        if len(data[0]) < DATUM_WIDTH - 1:
-            # we encountered end of file...
-            print("Truncating at %d examples (maximum)" % i)
-            break
-        items.append(Datum(data, DATUM_WIDTH, DATUM_HEIGHT))
-    return items
-
-
-import zipfile
-import os
-
-
-def readlines(filename):
-    "Opens a file or reads it from the zip archive data.zip"
-    if (os.path.exists(filename)):
-        return [l[:-1] for l in open(filename).readlines()]
-    else:
-        z = zipfile.ZipFile('data.zip')
-        return z.read(filename).split('\n')
-
-
-def loadLabelsFile(filename, n):
-    """
-    Reads n labels from a file and returns a list of integers.
-    """
-    fin = readlines(filename)
-    labels = []
-    for line in fin[:min(n, len(fin))]:
-        if line == '':
-            break
-        labels.append(int(line))
-    return labels
-
-
-def asciiGrayscaleConversionFunction(value):
-    """
-    Helper function for display purposes.
-    """
-    if (value == 0):
-        return ' '
-    elif (value == 1):
-        return '+'
-    elif (value == 2):
-        return '#'
-
-
-def IntegerConversionFunction(character):
-    """
-    Helper function for file reading.
-    """
-    if (character == ' '):
-        return 0
-    elif (character == '+'):
-        return 1
-    elif (character == '#'):
-        return 2
-
-
-def convertToInteger(data):
-    for i in range(len(data)):
-        for j in range(len(data[0])):
-            character = data[i][j]
-            data[i][j] = IntegerConversionFunction(character)
-    return data
-
-
-
-
-
 
 # Testing
 
@@ -188,8 +100,8 @@ def _test():
     n = 2
     # items = loadDataFile("facedata/facedatatrain", n,60,70)
     # labels = loadLabelsFile("facedata/facedatatrainlabels", n)
-    items = loadDataFile("digitdata/trainingimages", n, 28, 28)
-    labels = loadLabelsFile("digitdata/traininglabels", n)
+    items = util.loadDataFile("digitdata/trainingimages", n, 28, 28)
+    labels = util.loadLabelsFile("digitdata/traininglabels", n)
     datumItem = items[0]
     print(datumItem.getAsciiString())
 
