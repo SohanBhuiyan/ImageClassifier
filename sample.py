@@ -6,7 +6,6 @@
 # John DeNero (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
 # For more info, see http://inst.eecs.berkeley.edu/~cs188/sp09/pacman.html
 
-import numpy as np
 import util
 
 ## Constants
@@ -61,10 +60,10 @@ class Datum:
         DATUM_WIDTH = width
         self.height = DATUM_HEIGHT
         self.width = DATUM_WIDTH
-        if data == None:
+        if data == None: # creates a empty array
             data = [[' ' for i in range(DATUM_WIDTH)] for j in range(DATUM_HEIGHT)]
-        self.pixels = np.asarray(util.convertToInteger(data))
-        print("bump")
+        else:
+            self.pixels = util.convertImageToNumpyArray(data)
 
     def getPixel(self, column, row):
         """

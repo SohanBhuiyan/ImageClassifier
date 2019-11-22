@@ -11,6 +11,7 @@
 import zipfile
 import os
 import random
+import numpy as np
 from sample import Datum
 def readlines(filename):
     "Opens a file or reads it from the zip archive data.zip"
@@ -86,6 +87,11 @@ def loadDataFile(filename, n, width, height):
             break
         items.append(Datum(data, DATUM_WIDTH, DATUM_HEIGHT))
     return items
+
+def convertImageToNumpyArray(image_matrix):
+    integer_array = convertToInteger(image_matrix)
+    numpy_array = np.asarray(integer_array)
+    return numpy_array
 
 
 def flipCoin(p):
