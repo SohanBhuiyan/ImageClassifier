@@ -6,6 +6,7 @@
 # John DeNero (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
 # For more info, see http://inst.eecs.berkeley.edu/~cs188/sp09/pacman.html
 
+import numpy as np
 import util
 
 ## Constants
@@ -62,7 +63,8 @@ class Datum:
         self.width = DATUM_WIDTH
         if data == None:
             data = [[' ' for i in range(DATUM_WIDTH)] for j in range(DATUM_HEIGHT)]
-        self.pixels = util.arrayInvert(convertToInteger(data))
+        self.pixels = np.asarray(convertToInteger(data))
+        print("bump")
 
     def getPixel(self, column, row):
         """
@@ -81,7 +83,7 @@ class Datum:
         Renders the data item as an ascii image.
         """
         rows = []
-        data = util.arrayInvert(self.pixels)
+        data = self.pixels
         for row in data:
             ascii = map(asciiGrayscaleConversionFunction, row)
             rows.append("".join(ascii))
@@ -167,13 +169,15 @@ def IntegerConversionFunction(character):
 
 
 def convertToInteger(data):
-    """
-    Helper function for file reading.
-    """
-    if type(data) != type([]):
-        return IntegerConversionFunction(data)
-    else:
-        return map(convertToInteger, data)
+    for i in range(len(data)):
+        for j in range(len(data[0])):
+            character = data[i][j]
+            data[i][j] = IntegerConversionFunction(character)
+    return data
+
+
+
+
 
 
 # Testing
@@ -181,19 +185,13 @@ def convertToInteger(data):
 def _test():
     import doctest
     doctest.testmod()  # Test the interactive sessions in function comments
-    n = 1
-    #  items = loadDataFile("facedata/facedatatrain", n,60,70)
-    #  labels = loadLabelsFile("facedata/facedatatrainlabels", n)
+    n = 2
+    # items = loadDataFile("facedata/facedatatrain", n,60,70)
+    # labels = loadLabelsFile("facedata/facedatatrainlabels", n)
     items = loadDataFile("digitdata/trainingimages", n, 28, 28)
     labels = loadLabelsFile("digitdata/traininglabels", n)
-    for i in range(1):
-        print(items[i])
-        print(items[i])
-        print(items[i].height)
-        print(items[i].width)
-        print(dir(items[i]))
-        print(items[i].getPixels())
-
+    datumItem = items[0]
+    print(datumItem.getAsciiString())
 
 if __name__ == "__main__":
     _test()
