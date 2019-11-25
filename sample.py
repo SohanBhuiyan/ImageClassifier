@@ -7,7 +7,7 @@
 # For more info, see http://inst.eecs.berkeley.edu/~cs188/sp09/pacman.html
 
 import util
-
+import features
 ## Constants
 DATUM_WIDTH = 0  # in pixels
 DATUM_HEIGHT = 0  # in pixels
@@ -104,5 +104,6 @@ def _test():
     datumItem = items[0]
     print(datumItem.getAsciiString())
 
+    features.rawPixelFeature(datumItem.pixels)
 if __name__ == "__main__":
     _test()

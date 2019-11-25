@@ -98,6 +98,9 @@ def flipCoin(p):
     r = random.random()
     return r < p
 
+def createVector(n):
+    vector = np.zeros(n)
+    return vector
 
 
 
