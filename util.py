@@ -58,6 +58,11 @@ def IntegerConversionFunction(character):
     elif (character == '#'):
         return 2
 
+def isColoredPixel(pixelValue):
+    if pixelValue == 0:  # 0 represents blank space
+        return False
+    else:
+        return True
 
 def convertToInteger(data):
     for i in range(len(data)):
