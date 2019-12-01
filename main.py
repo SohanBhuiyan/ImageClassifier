@@ -3,18 +3,26 @@ Read in the data and evaluate the models
 """
 
 import numpy as np
-
+from util import loadDataFile
 
 # TODO: first, implement these functions
 #       then, use them in the TODOs below
 
 
 def read_faces_file(loc: str) -> np.array:
-	raise NotImplementedError
+	n = 10 # number of data objects to read
+	items = loadDataFile(loc, n, 60, 70)
+	nparray = np.asarray(items)
+	return nparray
+
 
 
 def read_digits_file(loc: str) -> np.array:
-	raise NotImplementedError
+	n = 10 # number of data objects to read
+	items = loadDataFile(loc, n, 28, 28)
+	nparray = np.asarray(items)
+	return nparray
+
 
 
 def faces_features(faces: np.array) -> np.array:
