@@ -3,7 +3,8 @@ Read in the data and evaluate the models
 """
 
 import numpy as np
-from util import loadDataFile
+import util
+from features import rawPixelFeature
 
 # TODO: first, implement these functions
 #       then, use them in the TODOs below
@@ -24,9 +25,16 @@ def read_digits_file(loc: str) -> np.array:
 	return nparray
 
 
-
+# TODO might need a param to determine which feature to use
 def faces_features(faces: np.array) -> np.array:
-	raise NotImplementedError
+	features = []
+
+	for face in faces:
+		feature_vector = rawPixelFeature(face.getPixels())
+		features.append(feature_vector)
+	# convert to nparray
+	features = np.array(features)
+	return features
 
 
 def digits_features(digits: np.array) -> np.array:
@@ -48,3 +56,4 @@ def digits_features(digits: np.array) -> np.array:
 
 
 # TODO: redo this for digits by making a multi-class NB and Perceptron model
+
