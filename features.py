@@ -1,6 +1,4 @@
 import util
-from util import isColoredPixel
-from util import createVector
 "treat each pixel as its own feature"
 def rawPixelFeature(matrix):
     row = len(matrix)
@@ -24,12 +22,12 @@ def gridFeature(matrix):
 def rowPixelFeature(matrix):
     row = len(matrix)
     col = len(matrix[0])
-    vector = createVector(row)
+    vector = util.createVector(row)
 
     for i in range(row):
         coloredPixels = 0 # every row starts in the beginning
         for j in range(col):
-            if isColoredPixel(matrix[i][j]):
+            if util.isColoredPixel(matrix[i][j]):
                 coloredPixels = coloredPixels + 1
 
         vector[i] = coloredPixels
