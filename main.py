@@ -10,16 +10,16 @@ from util import loadDataFile
 
 
 def read_faces_file(loc: str) -> np.array:
-	n = 10 # number of data objects to read
-	items = loadDataFile(loc, n, 60, 70)
+	n = 10  # number of data objects to read
+	items = util.loadDataFile(loc, n, 60, 70)
 	nparray = np.asarray(items)
 	return nparray
 
 
 
 def read_digits_file(loc: str) -> np.array:
-	n = 10 # number of data objects to read
-	items = loadDataFile(loc, n, 28, 28)
+	n = 10  # number of data objects to read
+	items = util.loadDataFile(loc, n, 28, 28)
 	nparray = np.asarray(items)
 	return nparray
 
