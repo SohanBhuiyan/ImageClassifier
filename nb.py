@@ -14,7 +14,7 @@ class NaiveBayes(Model):
         self.labelProbability = self.unique(y)
         self.featureProbability = self.labels(x)
         self.numberOfImages = numberofImages
-
+        self.normal = self.normalize()
 
         #print(type(y[0]))
         labels, counts = np.unique(y, return_counts=True)
@@ -60,12 +60,14 @@ class NaiveBayes(Model):
             for num, y in enumerate(self.table[label]):
                 #print(num, y, "ANOTHER")
                 if x[num] in y:
-                    #print(imageGivenLabel)
                     imageGivenLabel *= (y[x[num]] /self.labelProbability[label])
                 else:
                     imageGivenLabel *= 0.001
-            equation = (1/self.numberOfImages) * imageGivenLabel * (self.labelProbability[label] / self.numberOfImages)
+            equation = (1/self.normal) * imageGivenLabel * (self.labelProbability[label] / self.numberOfImages)
+            #print((1/self.normal),imageGivenLabel, (self.labelProbability[label] / self.numberOfImages), "POOOOO")
+            #print((self.labelProbability[label] / self.numberOfImages))
             result[label] = equation
+        print(result, "ee")
         return result
 
     def unique(self, y: np.array) -> dict:
@@ -96,6 +98,14 @@ class NaiveBayes(Model):
         return featureDictionary
 
 
+    def normalize(self):
+        result = 1
+
+        for x in self.featureProbability:
+           #print(self.featureProbability[x], "PERC")
+            result *= self.featureProbability[x]/self.numberOfImages
+        return result
+
 if __name__ == '__main__':
     n_numbers_per_sample = 3
     n_train_samples = 10000
@@ -116,12 +126,19 @@ if __name__ == '__main__':
     model = NaiveBayes()
     print(validation_x[1], "VALID", validation_y[1])
     model.train(train_x, train_y)
-    
+    print(model.normalize(), "normal")
+
     temp = 0
+    temp2 = 0
+
     for w in range(len(validation_x)):
+        print(validation_y[w],model.predict(validation_x[w]), 'asfdasdfasdfasdfasdf')
         if np.argmax(validation_y[w]) == np.argmax(model.predict(validation_x[w])):
             # print(validation_y[w])
             temp += 1
+        else:
+            temp2 +=1
 
-    print(temp/10000)
+    print(temp /len(validation_x))
+    print(temp2 / len(validation_x))
 
