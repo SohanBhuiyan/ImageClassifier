@@ -1,144 +1,77 @@
+import math
 import numpy as np
+import random
+from functools import reduce
 from model import Model
 
 
+prod = lambda items: reduce(lambda a, b: a * b, items, 1)
+
+
 class NaiveBayes(Model):
-    # x is a matrix of images and their features
-    # y is the label of the image
-    def train(self, x: np.array, y: np.array):
-        numberOfFeatures = x.shape[1]
-        numberOfLabels = y.shape[1]
-        numberofImages = x.shape[0]
+	"""
+	This model assumes that we only use Boolean features.
+	"""
 
-        self.table = [[dict() for y in range(numberOfFeatures)] for x in range(numberOfLabels)]
-        self.labelProbability = self.unique(y)
-        self.featureProbability = self.labels(x)
-        self.numberOfImages = numberofImages
-        self.normal = self.normalize()
+	# note that this class internally doesn't use Numpy array since we don't do any linear algebra operations
 
-        #print(type(y[0]))
-        labels, counts = np.unique(y, return_counts=True)
-        #print(labels, counts, 'asdasd')
-        #print(numberofImages, numberOfFeatures, numberOfLabels)
+	def train(self, x: np.array, y: np.array):
+		self.train_x = list(x)
+		self.train_y = list(y)
+		self.labels = sorted(list(set(list(y))))
+		features = list(range(x.shape[1]))
 
-        for features, label in zip(x, y):
-            # print(features, label)
-            for x, y in enumerate(label):
-                if y == 1:
-                    # print(self.table[x])
-                    # self.table[x]
-                    # print("adsasdasdas", features[1])
+		self._probability = {label: self.train_y.count(label) / len(self.train_y) for label in self.labels}
+		self._probability_given = {
+			(feature, label): [[x[feature]].count(1) for i, x in enumerate(self.train_x) if self.train_y[i] == label].count(True) / self.train_y.count(label)
+			for feature in features
+			for label in self.labels}
 
-                    for i in range(len(features)):
-                        feat = features[i]
-                        if feat in self.table[x][i]:
-                            self.table[x][i][feat] += 1
-                        else:
-                            self.table[x][i][feat] = 1
+	def predict(self, x: np.array) -> np.array:
+		return np.array([
+			np.argmax([
+				self._probability[label] * prod([self._probability_given[i, label] if feature else 1 - self._probability_given[i, label] for i, feature in enumerate(item)])
+				for label in self.labels])
+			for item in x])
 
-                        if feat in self.featureProbability:
-                            self.featureProbability[feat] += 1
-                        else:
-                            self.featureProbability[feat] = 1
-
-        # print(len(self.table[0][0]), self.table[0][0])
-        # print(self.table)
-        # print(self.featureProbability)
-
-                # print(x,y)
-            # break
-
-
-    def predict(self, x: np.array) -> np.array:
-        #result = np.array(len(self.labelProbability))
-        result = np.zeros(shape=(len(self.labelProbability)))
-        imageGivenLabel = 1
-
-
-        for label in range(len(self.labelProbability)):
-            #print(label, "PREDICT")
-            for num, y in enumerate(self.table[label]):
-                #print(num, y, "ANOTHER")
-                if x[num] in y:
-                    imageGivenLabel *= (y[x[num]] /self.labelProbability[label])
-                else:
-                    imageGivenLabel *= 0.001
-            equation = (1/self.normal) * imageGivenLabel * (self.labelProbability[label] / self.numberOfImages)
-            #print((1/self.normal),imageGivenLabel, (self.labelProbability[label] / self.numberOfImages), "POOOOO")
-            #print((self.labelProbability[label] / self.numberOfImages))
-            result[label] = equation
-        print(result, "ee")
-        return result
-
-    def unique(self, y: np.array) -> dict:
-        labelDictionary = dict()
-        for labels in y:
-            #print(labels, "eee", labels[0])
-            for num,label in enumerate(labels):
-                #print(label, num)
-                if label == 1:
-                    if num in labelDictionary:
-                        labelDictionary[num] += 1
-                    else:
-                        labelDictionary[num] = 1
-
-        return labelDictionary
-
-
-    def labels(self, x: np.array) -> dict:
-        featureDictionary = dict()
-
-        for feats in x:
-            for y in feats:
-                if y in featureDictionary:
-                    featureDictionary[y] += 1
-                else:
-                    featureDictionary[y] = 1
-
-        return featureDictionary
-
-
-    def normalize(self):
-        result = 1
-
-        for x in self.featureProbability:
-           #print(self.featureProbability[x], "PERC")
-            result *= self.featureProbability[x]/self.numberOfImages
-        return result
 
 if __name__ == '__main__':
-    n_numbers_per_sample = 3
-    n_train_samples = 10000
-    n_validation_samples = 500
-    train_x = np.random.rand(n_train_samples, n_numbers_per_sample) - 0.5
-    train_y = np.array([[1, 0] if row.mean() >= 0 else [0, 1] for row in train_x], dtype=np.float64)
-    validation_x = np.random.rand(n_validation_samples, n_numbers_per_sample) - 0.5
-    validation_y = np.array([[1, 0] if row.mean() >= 0 else [0, 1] for row in validation_x], dtype=np.float64)
+	# to test the model, we want to give it some dummy data.
+	# specifically, we will give a bunch of boolean attributes about a person
+	# there is also a third class, which is for dogs
 
-    train_x = np.round(train_x, 1)
-    print('Training input (beginning):')
-    print(train_x[:3])
-    print('Training labels (beginning):')
-    print(train_y[:3])
-    validation_x = np.round(validation_x, 1)
-    # now, we can make the model
-    print('train')
-    model = NaiveBayes()
-    print(validation_x[1], "VALID", validation_y[1])
-    model.train(train_x, train_y)
-    print(model.normalize(), "normal")
+	n_samples_per_class = 10000
 
-    temp = 0
-    temp2 = 0
+	man = lambda:   [random.random() < 0.8, random.random() < 0.1, random.random() < 0.3]
+	woman = lambda: [random.random() < 0.1, random.random() < 0.9, random.random() < 0.1]
+	dog = lambda:   [random.random() < 0.2, random.random() < 0.0, random.random() < 0.8]
+	men = np.array([man() for _ in range(n_samples_per_class)])
+	women = np.array([woman() for _ in range(n_samples_per_class)])
+	dogs = np.array([dog() for _ in range(n_samples_per_class)])
+	x = np.concatenate([men, women, dogs]).astype(np.int8)
+	y = np.array(sorted([0, 1, 2] * (n_samples_per_class)))
+	n_validation = n_samples_per_class // 10
+	indices = list(range(3 * n_samples_per_class))
+	random.shuffle(indices)
+	validation = indices[:n_validation]
+	not_validation = list(set(range(3 * n_samples_per_class)) - set(validation))
+	train_x = x[not_validation]
+	train_y = y[not_validation]
+	validation_x = x[validation]
+	validation_y = y[validation]
 
-    for w in range(len(validation_x)):
-        print(validation_y[w],model.predict(validation_x[w]), 'asfdasdfasdfasdfasdf')
-        if np.argmax(validation_y[w]) == np.argmax(model.predict(validation_x[w])):
-            # print(validation_y[w])
-            temp += 1
-        else:
-            temp2 +=1
+	print('Training input (beginning):')
+	print(train_x[:3])
+	print('Training labels (beginning):')
+	print(train_y[:3])
+	validation_x = np.round(validation_x, 1)
 
-    print(temp /len(validation_x))
-    print(temp2 / len(validation_x))
+	# now, we can make the model
+	model = NaiveBayes()
+	model.train(train_x, train_y)
 
+	n_correct = 0
+
+	accuracy = list(model.predict(validation_x) == validation_y).count(True) / n_validation
+
+	print('Accuracy:', accuracy)
