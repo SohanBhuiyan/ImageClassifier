@@ -8,12 +8,8 @@
 
 import util
 import features
-## Constants
 DATUM_WIDTH = 0  # in pixels
 DATUM_HEIGHT = 0  # in pixels
-
-
-## Module Classes
 
 class Datum:
     """
@@ -94,15 +90,15 @@ class Datum:
 # Testing
 
 def _test():
-    import doctest
-    doctest.testmod()  # Test the interactive sessions in function comments
     n = 2
-    # items = loadDataFile("facedata/facedatatrain", n,60,70)
+    items = util.loadDataFile("facedata/facedatatrain", n,60,70)
     # labels = loadLabelsFile("facedata/facedatatrainlabels", n)
-    items = util.loadDataFile("digitdata/trainingimages", n, 28, 28)
+   # items = util.loadDataFile("digitdata/trainingimages", n, 28, 28)
     labels = util.loadLabelsFile("digitdata/traininglabels", n)
     datumItem = items[0]
     print(datumItem.getAsciiString())
+
+
 
     features.rawPixelFeature(datumItem.pixels)
 if __name__ == "__main__":
