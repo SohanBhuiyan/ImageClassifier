@@ -28,14 +28,14 @@ class KNN(Model):
 
 	def train(self, x: np.array, y: np.array):
 		self.train_x = x
-		self.train_y = y.argmax(axis=1)
+		self.train_y = y
 		self.n_classes = len(set(self.train_y))
 
 		self.mins = x.min(axis=0)
 		self.maxes = x.max(axis=0)
 
 	def predict(self, x: np.array) -> np.array:
-		predictions = np.zeros([x.shape[0], self.n_classes])
+		predictions = []
 
 		for i, item in enumerate(x):
 			# we find how close each point is using Manhattan distance,
@@ -46,9 +46,9 @@ class KNN(Model):
 			points_sorted_by_distance = [u[0] for u in sorted(list(enumerate(distances)), key=lambda x:x[1])]
 			neighbors = points_sorted_by_distance[:self.k]
 			plurality = pd.Series(self.train_y[neighbors]).value_counts().keys()[0]
-			predictions[i, plurality] = 1.
+			predictions.append(plurality)
 
-		return predictions
+		return np.array(predictions)
 
 
 if __name__ == '__main__':
@@ -85,10 +85,7 @@ if __name__ == '__main__':
 	validation = indices[:n_validation]
 	not_validation = list(set(range(3 * n_samples_per_city)) - set(validation))
 	x = np.concatenate([nyc, sf, houston])
-	classes = np.array(sorted([0, 1, 2] * n_samples_per_city))
-	y = np.zeros([3 * n_samples_per_city, 3])
-	for i, city in enumerate(classes):
-		y[i, city] = 1.
+	y = np.array(sorted([0, 1, 2] * n_samples_per_city))
 	train_x = x[not_validation]
 	train_y = y[not_validation]
 	validation_x = x[validation]
@@ -111,6 +108,6 @@ if __name__ == '__main__':
 	print('Ideal classifications (beginning):')
 	print(validation_y[:10])
 
-	matches = list(model.predict(validation_x).argmax(axis=1) == validation_y.argmax(axis=1)).count(True)
+	matches = list(model.predict(validation_x) == validation_y).count(True)
 	accuracy = matches / n_validation
 	print('Accuracy:', 100 * accuracy, '%')

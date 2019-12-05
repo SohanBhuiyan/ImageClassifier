@@ -15,14 +15,12 @@ class Perceptron(Model):
 
 	def train(self, x: np.array, y: np.array, n_epochs=5):
 		n_features = x.shape[1]
-		n_labels = y.shape[1]
+		n_labels = len(set(list(y)))
 		self.weights = np.random.rand(n_features, n_labels)
 
 		for _ in range(n_epochs):
 			prediction = self.predict(x)
-			for features, predicted_labeling, actual_labeling in zip(x, prediction, y):
-				predicted_label = predicted_labeling.argmax()
-				actual_label = actual_labeling.argmax()
+			for features, predicted_label, actual_label in zip(x, prediction, y):
 				if predicted_label != actual_label:
 					# we got it wrong, so we have to correct it
 					self.weights[:, actual_label] += features
@@ -32,7 +30,7 @@ class Perceptron(Model):
 		# instead of multiplying each row by weight vectors,
 		# we can just use a matrix multiplication to do all of this at once.
 		# unforetunately, we have to briefly convert to matrices to do this.
-		return np.array(np.matrix(x) * np.matrix(self.weights))
+		return np.array(np.matrix(x) * np.matrix(self.weights)).argmax(axis=1)
 
 
 if __name__ == '__main__':
@@ -47,9 +45,9 @@ if __name__ == '__main__':
 	n_train_samples = 10000
 	n_validation_samples = 500
 	train_x = np.random.rand(n_train_samples, n_numbers_per_sample) - 0.5
-	train_y = np.array([[1, 0] if row.mean() >= 0 else [0, 1] for row in train_x], dtype=np.float64)
+	train_y = np.array([0 if row.mean() >= 0 else 1 for row in train_x], dtype=np.int8)
 	validation_x = np.random.rand(n_validation_samples, n_numbers_per_sample) - 0.5
-	validation_y = np.array([[1, 0] if row.mean() >= 0 else [0, 1] for row in validation_x], dtype=np.float64)
+	validation_y = np.array([0 if row.mean() >= 0 else 1 for row in validation_x], dtype=np.int8)
 
 
 	print('Training input (beginning):')
@@ -61,30 +59,13 @@ if __name__ == '__main__':
 	model = Perceptron()
 	model.train(train_x, train_y)
 
-	print('Classifications (beginning):')
+	print('Model inputs (beginning):')
 	print(validation_x[:10])
-	print(model.predict(validation_x).argmax(axis=1)[:10])
+	print('Model outputs (beginning):')
+	print(model.predict(validation_x)[:10])
 
-	inaccuracy = np.sum(np.abs((model.predict(validation_x).argmax(axis=1) - validation_y.argmax(axis=1)))) / n_validation_samples
+	inaccuracy = np.sum(np.abs((model.predict(validation_x) - validation_y))) / n_validation_samples
 	print('Accuracy:', 100 * (1 - inaccuracy), '%')
 
 	print('Weights:')
 	print(model.weights)
-
-
-	# at this point, we can generate some statistics
-	print()
-	for n_epochs in range(5):
-		accuracies = []
-		for _ in range(10):
-			train_x = np.random.rand(n_train_samples, n_numbers_per_sample) - 0.5
-			train_y = np.array([[1, 0] if row.mean() >= 0 else [0, 1] for row in train_x], dtype=np.float64)
-			validation_x = np.random.rand(n_validation_samples, n_numbers_per_sample) - 0.5
-			validation_y = np.array([[1, 0] if row.mean() >= 0 else [0, 1] for row in validation_x], dtype=np.float64)
-
-			model = Perceptron()
-			model.train(train_x, train_y, n_epochs=n_epochs)
-
-			inaccuracy = np.sum(np.abs((model.predict(validation_x).argmax(axis=1) - validation_y.argmax(axis=1)))) / n_validation_samples
-			accuracies.append(100 * (1 - inaccuracy))
-		print('Mean accuracy with', n_epochs, 'epochs:', sum(accuracies) / len(accuracies))
