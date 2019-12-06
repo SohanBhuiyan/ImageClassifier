@@ -12,7 +12,7 @@ import zipfile
 import os
 import random
 import numpy as np
-from sample import Datum
+from datum import Datum
 def readlines(filename):
     "Opens a file or reads it from the zip archive data.zip"
     if (os.path.exists(filename)):
@@ -74,7 +74,6 @@ def convertToInteger(data):
 def loadDataFile(filename, n, width, height):
     """
     Reads n data images from a file and returns a list of Datum objects.
-
     (Return less then n items if the end of file is encountered).
     """
     DATUM_WIDTH = width
@@ -103,13 +102,18 @@ def flipCoin(p):
     r = random.random()
     return r < p
 
+# returns a numpy vector filled with 0s of size n
 def createVector(n):
     vector = np.zeros(n)
     return vector
 
 
 
+def splitFaceArray(array):
+	return np.array_split(array,7)
 
+def splitDigitArray(array):
+    return np.array_split(array,7)
 
 
 
