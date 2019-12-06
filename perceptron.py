@@ -13,12 +13,15 @@ class Perceptron(Model):
 	Note: this doesn't use a bias because the Berkeley version doesn't, but we might add bias later.
 	"""
 
-	def train(self, x: np.array, y: np.array, n_epochs=5):
+	def __init__(self, epochs=5):
+		self.epochs = epochs
+
+	def train(self, x: np.array, y: np.array):
 		n_features = x.shape[1]
 		n_labels = len(set(list(y)))
 		self.weights = np.random.rand(n_features, n_labels)
 
-		for _ in range(n_epochs):
+		for _ in range(self.epochs):
 			prediction = self.predict(x)
 			for features, predicted_label, actual_label in zip(x, prediction, y):
 				if predicted_label != actual_label:
