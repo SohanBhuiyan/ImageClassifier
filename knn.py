@@ -4,7 +4,6 @@ Define a decision tree model.
 
 
 import numpy as np
-import pandas as pd
 import random
 from model import Model
 
@@ -45,7 +44,9 @@ class KNN(Model):
 			distances = distance(normalize(self.train_x), normalize(item))
 			points_sorted_by_distance = [u[0] for u in sorted(list(enumerate(distances)), key=lambda x:x[1])]
 			neighbors = points_sorted_by_distance[:self.k]
-			plurality = pd.Series(self.train_y[neighbors]).value_counts().keys()[0]
+			classes, counts = np.unique(neighbors, return_counts=True)
+			index = np.argmax(counts)
+			plurality = classes[index]
 			predictions.append(plurality)
 
 		return np.array(predictions)
