@@ -4,29 +4,28 @@ Read in the data and evaluate the models
 
 import numpy as np
 import util
-from features import rawPixelFeature
+from perceptron import Perceptron
+from knn import KNN
+from features import rawPixelFeature, rowPixelFeature, gridFeature
 
 # TODO: first, implement these functions
 #       then, use them in the TODOs below
 
 
-def read_faces_file(loc: str) -> np.array:
-	n = 10  # number of data objects to read
+def read_faces_file(loc: str, n: int) -> np.array:
 	items = util.loadDataFile(loc, n, 60, 70)
 	nparray = np.asarray(items)
 	return nparray
 
 
 
-def read_digits_file(loc: str) -> np.array:
-	n = 10  # number of data objects to read
+def read_digits_file(loc: str, n: int) -> np.array:
 	items = util.loadDataFile(loc, n, 28, 28)
 	nparray = np.asarray(items)
 	return nparray
 
 
-# TODO might need a param to determine which feature to use
-def faces_features(faces: np.array) -> np.array:
+def perceptron_faces_features(faces: np.array) -> np.array:
 	features = []
 
 	for face in faces:
@@ -37,23 +36,50 @@ def faces_features(faces: np.array) -> np.array:
 	return features
 
 
+def knn_faces_features(faces: np.array) -> np.array:
+	features = []
+
+	for face in faces:
+		arr = face.getPixels()
+		feature_vector = [arr.mean(), arr.std(), len(arr[arr != 0])]
+		feature_vector = gridFeature(face.getPixels())
+		features.append(feature_vector)
+	# convert to nparray
+	features = np.array(features)
+	return features
+
+
 def digits_features(digits: np.array) -> np.array:
 	raise NotImplementedError
 
+def split(array):
+	s = np.split(array,2)
+	print(s)
+	return s
 
-# TODO: read the raw input data and label data for the faces
-# NOTE: keep the train, test, and validation data separate
+if __name__ == '__main__':
+	n_samples = 450
+	n_validation = n_samples // 10
+	faces_list = read_faces_file("facedata/facedatatrain", n_samples)
 
-# TODO: turn the raw input data into a 2d numpy array where each row describes an input face and each column is a feature
+	y = util.loadLabelsFile("facedata/facedatatrainlabels", n_samples)
+	train_y = y[:-n_validation]
+	validation_y = y[-n_validation:]
 
-# TODO: turn the label data into a numpy vector
+	x = perceptron_faces_features(faces_list)
+	train_x = x[:-n_validation]
+	validation_x = x[-n_validation:]
+	p_model = Perceptron(100)
+	p_model.train(train_x, train_y)
+	matches = list(p_model.predict(validation_x) == validation_y).count(True)
+	accuracy = matches / n_validation
+	print('Perceptron accuracy:', 100 * accuracy, '%')
 
-# TODO: train a perceptron on the training data
-# TODO: evaluate the perceptron on the validation data
-
-# TODO: train a naive bayes model on the training data
-# TODO: evaluate the naive bayes model on the validation data
-
-
-# TODO: redo this for digits by making a multi-class NB and Perceptron model
-
+	x = knn_faces_features(faces_list)
+	train_x = x[:-n_validation]
+	validation_x = x[-n_validation:]
+	knn_model = KNN()
+	knn_model.train(train_x, train_y)
+	matches = list(knn_model.predict(validation_x) == validation_y).count(True)
+	accuracy = matches / n_validation
+	print('KNN accuracy:', 100 * accuracy, '%')
