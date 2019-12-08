@@ -74,7 +74,7 @@ if __name__ == '__main__':
 	n_validation = n_samples // 10
 	faces_list = read_faces_file("facedata/facedatatrain", n_samples)
 
-	y = util.loadLabelsFile("facedata/facedatatrainlabels", n_samples)
+	y = np.array(util.loadLabelsFile("facedata/facedatatrainlabels", n_samples))
 	train_y = y[:-n_validation]
 	validation_y = y[-n_validation:]
 
