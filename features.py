@@ -15,6 +15,38 @@ def rawPixelFeature(matrix):
     return vector
 
 
+def multipleGridFeatures(matrix):
+    row = len(matrix)
+    col = len(matrix[0])
+    vector = util.createVector(row * col)
+    vIndex = 0
+
+    startingx = 5
+    startingy = 5
+    temp = 0
+
+    for i in range(row):
+        for j in range(col):
+            if (i < 5 or j < 5):
+                continue
+            else:
+                for k in range(5):
+                    for l in range(5):
+                        # print(i+k)
+                        # print(j+l)
+                        if not((i + k) >= row or (j + l) >= col):
+                            temp += matrix[i+k][j+l]
+
+                if temp > 15:
+                    vector[vIndex] = 1
+                    vIndex = vIndex + 1
+                    temp = 0
+                else:
+                    vector[vIndex] = 0
+                    vIndex = vIndex + 1
+                    temp = 0
+    return vector
+
 # breaks a nxn matrix into 7 mxm segments
 def gridFeature(matrix):
     split_matrices = util.splitFaceArray(matrix)

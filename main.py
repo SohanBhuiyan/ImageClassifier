@@ -4,9 +4,11 @@ Read in the data and evaluate the models
 
 import numpy as np
 import util
+from nb import NaiveBayes
 from perceptron import Perceptron
 from knn import KNN
-from features import rawPixelFeature, rowPixelFeature, gridFeature
+from features import rawPixelFeature, rowPixelFeature, gridFeature, multipleGridFeatures
+
 
 # TODO: first, implement these functions
 #       then, use them in the TODOs below
@@ -48,6 +50,16 @@ def knn_faces_features(faces: np.array) -> np.array:
 	features = np.array(features)
 	return features
 
+def nb_faces_features(faces: np.array) -> np.array:
+	features = []
+
+	for face in faces:
+		feature_vector = multipleGridFeatures(face.getPixels())
+		features.append(feature_vector)
+
+	features = np.array(features)
+	return features
+
 
 def digits_features(digits: np.array) -> np.array:
 	raise NotImplementedError
@@ -74,6 +86,15 @@ if __name__ == '__main__':
 	matches = list(p_model.predict(validation_x) == validation_y).count(True)
 	accuracy = matches / n_validation
 	print('Perceptron accuracy:', 100 * accuracy, '%')
+
+	x = nb_faces_features(faces_list)
+	train_x = x[:-n_validation]
+	validation_x = x[-n_validation:]
+	nb_model = NaiveBayes()
+	nb_model.train(train_x, train_y)
+	matches = list(nb_model.predict(validation_x) == validation_y).count(True)
+	accuracy = matches / n_validation
+	print('nb accuracy:', 100 * accuracy, '%')
 
 	x = knn_faces_features(faces_list)
 	train_x = x[:-n_validation]
