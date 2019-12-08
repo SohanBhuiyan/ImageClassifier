@@ -78,3 +78,29 @@ def rowPixelFeature(matrix):
         vector[i] = coloredPixels
     return vector
 
+def imageCompressor(matrix):
+    row = len(matrix)
+    col = len(matrix[0])
+    vector = util.createVector(row * col)
+    vIndex = 0
+
+    dim = 2
+
+    temp = np.zeros((int(row/dim), int(col/dim)))
+
+    # print(matrix)
+    #matrix = np.array(matrix)
+    for i in range(0,row, dim):
+        for j in range(0,col, dim):
+            # print(i, j)
+            for x in range(0, dim):
+                for y in range(0, dim):
+                    if not ((i + x) >= row or (j + y) >= col):
+                        if int((i + x)/dim) < int(row/dim) and int((j + y)/dim) < int(col/dim):
+                            #temp[int((i + x)/dim)][int((j + y)/dim)] += matrix[(i + x)][(j + y)]
+                            temp[int((i + x) / dim)][int((j + y) / dim)] = max(temp[int((i + x)/dim)][int((j + y)/dim)],matrix[(i + x)][(j + y)])
+
+    vector = np.ndarray.flatten(temp)
+    # print(vector)
+    #print(temp)
+    return vector
