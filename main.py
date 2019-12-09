@@ -87,28 +87,58 @@ def digitClassification(percent: int):
 	train_x = x
 	test_x = perceptron_faces_features(digit_test_list)
 	p_model = Perceptron(100)
+
+	start_time = time.time()
 	p_model.train(train_x, train_y)
+	elapsed_time = time.time() - start_time
+	print('%.3f' % (elapsed_time) + " seconds for training")
+
+	start_time = time.time()
 	matches = list(p_model.predict(test_x) == test_y).count(True)
+	elapsed_time = time.time() - start_time
+	print('%.3f' % (elapsed_time) + " seconds for predicting")
+
 	accuracy = matches / n_testing_digits
 	print('Perceptron accuracy:', 100 * accuracy, '%')
+	print()
 
 	x = nb_faces_features(digit_list)
 	train_x = x
 	test_x = nb_faces_features(digit_test_list)
 	nb_model = NaiveBayes()
+
+	start_time = time.time()
 	nb_model.train(train_x, train_y)
+	elapsed_time = time.time() - start_time
+	print('%.3f' % (elapsed_time) + " seconds for training")
+
+	start_time = time.time()
 	matches = list(nb_model.predict(test_x) == test_y).count(True)
+	elapsed_time = time.time() - start_time
+	print('%.3f' % (elapsed_time) + " seconds for predicting")
+
 	accuracy = matches / n_testing_digits
 	print('nb accuracy:', 100 * accuracy, '%')
+	print()
 
 	x = knn_faces_features(digit_list)
 	train_x = x
 	test_x = knn_faces_features(digit_test_list)
 	knn_model = KNN()
+
+	start_time = time.time()
 	knn_model.train(train_x, train_y)
+	elapsed_time = time.time() - start_time
+	print('%.3f' % (elapsed_time) + " seconds for training")
+
+	start_time = time.time()
 	matches = list(knn_model.predict(test_x) == test_y).count(True)
+	elapsed_time = time.time() - start_time
+	print('%.3f' % (elapsed_time) + " seconds for predicting")
+
 	accuracy = matches / n_testing_digits
 	print('KNN accuracy:', 100 * accuracy, '%')
+	print()
 
 def faceClassification(percent: int):
 	n_total_faces = 450
@@ -121,33 +151,62 @@ def faceClassification(percent: int):
 
 	train_y = y
 	test_y = np.array(util.loadLabelsFile("facedata/facedatatestlabels", n_testing_digits))
-
 	x = perceptron_faces_features(face_list)
 	train_x = x
 	test_x = perceptron_faces_features(face_test_list)
 	p_model = Perceptron(100)
+
+	start_time = time.time()
 	p_model.train(train_x, train_y)
+	elapsed_time = time.time() - start_time
+	print('%.3f' % (elapsed_time) + " seconds for training")
+
+	start_time = time.time()
 	matches = list(p_model.predict(test_x) == test_y).count(True)
+	elapsed_time = time.time() - start_time
+	print('%.3f' % (elapsed_time) + " seconds for predicting")
+
 	accuracy = matches / n_testing_digits
 	print('Perceptron accuracy:', 100 * accuracy, '%')
+	print()
 
 	x = nb_faces_features(face_list)
 	train_x = x
 	test_x = nb_faces_features(face_test_list)
 	nb_model = NaiveBayes()
+
+	start_time = time.time()
 	nb_model.train(train_x, train_y)
+	elapsed_time = time.time() - start_time
+	print('%.3f' % (elapsed_time) + " seconds for training")
+
+	start_time = time.time()
 	matches = list(nb_model.predict(test_x) == test_y).count(True)
+	elapsed_time = time.time() - start_time
+	print('%.3f' % (elapsed_time) + " seconds for predicting")
+
 	accuracy = matches / n_testing_digits
 	print('nb accuracy:', 100 * accuracy, '%')
+	print()
 
 	x = knn_faces_features(face_list)
 	train_x = x
 	test_x = knn_faces_features(face_test_list)
 	knn_model = KNN()
+
+	start_time = time.time()
 	knn_model.train(train_x, train_y)
+	elapsed_time = time.time() - start_time
+	print('%.3f' % (elapsed_time) + " seconds for training")
+
+	start_time = time.time()
 	matches = list(knn_model.predict(test_x) == test_y).count(True)
+	elapsed_time = time.time() - start_time
+	print('%.3f' % (elapsed_time) + " seconds for predicting")
+
 	accuracy = matches / n_testing_digits
 	print('KNN accuracy:', 100 * accuracy, '%')
+	print()
 
 if __name__ == '__main__':#demonstration
 
